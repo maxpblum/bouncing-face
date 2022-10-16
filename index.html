@@ -1,0 +1,65 @@
+<head>
+  <script>
+    function bounceFace(ctx, canvasWidth, canvasHeight, y, radius, interval) {
+      const totalDistanceAcross = canvasWidth - radius - radius;
+      function distanceAcross(nowMs) {
+        const fractionOfInterval = (nowMs % interval) / interval;
+        const zeroCenteredFraction = fractionOfInterval - 0.5;
+        const distanceFromRight = Math.abs(zeroCenteredFraction) * 2 * totalDistanceAcross;
+        return totalDistanceAcross - distanceFromRight;
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        drawFace(ctx, radius + distanceAcross(Date.now()), y, radius);
+        window.requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    function drawFace(ctx, x, y, radius) {
+      ctx.lineWidth = 5;
+
+      // Outside of face.
+      ctx.strokeStyle = 'green';
+      ctx.fillStyle = 'yellow';
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.fill();
+
+      function drawEye(x) {
+        ctx.strokeStyle = 'gray';
+        ctx.fillStyle = 'cyan';
+        ctx.beginPath();
+        ctx.arc(x, y - 0.3 * radius, 0.2 * radius, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fill();
+
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.arc(x, y - 0.3 * radius, 0.05 * radius, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      drawEye(x - 0.4 * radius);
+      drawEye(x + 0.4 * radius);
+
+      // Mouth.
+      ctx.strokestyle = 'red';
+      ctx.beginPath();
+      ctx.arc(x, y + 0.15 * radius, 0.5 * radius, 0, Math.PI);
+      ctx.stroke();
+    }
+
+    window.addEventListener('load', () => {
+      const ctx = canvas.getContext('2d');
+      bounceFace(ctx, canvas.width, canvas.height, 100, 60, 2000);
+    });
+  </script>
+</head>
+<body>
+<canvas id="canvas" width=400 height=400></canvas>
+</body>
